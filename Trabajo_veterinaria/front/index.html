@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clínica Veterinaria</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="header">
+    <h1>Clínica Veterinaria - CanoVáz</h1>
+  </header>
+
+  <div class="subtitulo">
+    <h2>Trabajo Integrador FIP 2024</h2>
+  </div>
+
+  <div class="container">
+    <div class="section">
+      <h2>Clientes</h2>
+      <button onclick="obtenerClientes()">Listar Clientes</button>
+      <button onclick="crearCliente()">Agregar Cliente</button>
+      <div id="clientes-output" class="output"></div>
+    </div>
+
+    <div class="section">
+      <h2>Mascotas</h2>
+      <button onclick="obtenerMascotas()">Listar Mascotas</button>
+      <button onclick="crearMascota()">Agregar Mascota</button>
+      <div id="mascotas-output" class="output"></div>
+    </div>
+
+    <div class="section">
+      <h2>Proveedores</h2>
+      <button onclick="obtenerProveedores()">Listar Proveedores</button>
+      <button onclick="crearProveedor()">Agregar Proveedor</button>
+      <div id="proveedores-output" class="output"></div>
+    </div>
+
+    <div class="section">
+      <h2>Veterinarias</h2>
+      <button onclick="obtenerVeterinarias()">Listar Veterinarias</button>
+      <button onclick="crearVeterinaria()">Agregar Veterinaria</button>
+      <div id="veterinarias-output" class="output"></div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>Canosa-Vázquez &copy; 2024</p>
+  </footer>
+
+  <script src="funciones.js"></script>
+</body>
+</html>

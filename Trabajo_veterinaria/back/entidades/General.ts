@@ -1,10 +1,10 @@
 // Clase general con atributos comunes (id, nombre, telefono, direccion)
-export class General {
+export abstract class General {
   // Constructor para inicializar los atributos comunes
   constructor(
-    public id: number,        // ID unico (se asignara desde los servicios)
-    public nombre: string,    // Nombre de la persona
-    public telefono: string,  // Telefono de contacto
-    public direccion: string  // Direccion de la persona
+    protected id: number,        // ID unico (voy a usar una funcion para generar IDs unicos)
+    protected nombre: string,    // Nombre de la persona
+    protected telefono: number,  // Telefono de contacto
+    protected direccion: string  // Direccion de la persona
   ) {}
 }
