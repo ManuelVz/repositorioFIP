@@ -5,121 +5,71 @@ import { ProveedorService } from './back/servicios/ProveedorServicio';
 import { VeterinariaService } from './back/servicios/VeterinariaServicio';
 import cors from 'cors';
 
-// Instancio los servicios
-const clienteService = new ClienteService();
-const mascotaService = new MascotaService();
-const proveedorService = new ProveedorService();
-const veterinariaService = new VeterinariaService();
+const servicios = {
+  clienteService: new ClienteService(),
+  mascotaService: new MascotaService(),
+  proveedorService: new ProveedorService(),
+  veterinariaService: new VeterinariaService(),
+};
 
 const app = express();
-app.use(cors());  // Esto permite que el servidor acepte solicitudes desde cualquier origen
+app.use(cors());
 app.use(express.json());
 
-// Endpoints para clientes
-app.post('/clientes', (req: Request, res: Response) => {
-  const { nombre, telefono, direccion } = req.body;  // Desestructuro 'direccion' también
-  clienteService.agregarCliente(nombre, telefono, direccion);  // Pasamos 'direccion' al servicio
-  res.json({ message: `Cliente ${nombre} agregado` });
+const crearEndpoint = (servicio: any, entidad: string) => {
+  console.log(`Creando rutas para ${entidad}`);
+
+  // Endpoint para agregar
+  app.post(`/${entidad}`, (req: Request, res: Response) => {
+    const { ...params } = req.body;
+    servicio.agregarElemento(...Object.values(params));
+    res.json({ message: `${entidad} agregado con éxito.` });
+  });
+
+  // Endpoint para obtener todos
+  app.get(`/${entidad}`, (req: Request, res: Response) => {
+    console.log(`GET /${entidad}`);  // Esto te ayudará a ver si la ruta es alcanzada
+    res.json(servicio.obtenerElementos());
+  });
+
+  // Endpoint para editar
+  app.put(`/${entidad}/:id`, (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
+    const { ...params } = req.body;
+    servicio.modificarElemento(id, ...Object.values(params));
+    res.json({ message: `${entidad} modificado con éxito.` });
+  });
+
+  // Endpoint para eliminar
+  app.delete(`/${entidad}/:id`, (req: Request, res: Response) => {
+    const id = parseInt(req.params.id);
+    servicio.eliminarElemento(id);
+    res.json({ message: `${entidad} eliminado con éxito.` });
+  });
+
+  // Endpoint para incrementar visitas de un cliente
+  app.put(`/cliente/:id/visitas`, (req: Request, res: Response) => {
+    const id = parseInt(req.params.id); // Obtener el ID del cliente de los parámetros
+    const cliente = servicios.clienteService.obtenerElementos().find((c: any) => c.id === id); // Buscar el cliente
+    
+    if (cliente) {
+      cliente.incrementarVisitas(); // Incrementar visitas
+      res.json({ message: `Visitas del cliente ${id} incrementadas.`, cliente });
+    } else {
+      res.status(404).json({ error: `Cliente con ID ${id} no encontrado.` });
+    }
 });
 
-app.get('/clientes', (req: Request, res: Response) => {
-  res.json(clienteService.obtenerClientes());
+};
+
+// Crear endpoints para cada servicio
+Object.entries(servicios).forEach(([key, servicio]) => {
+  const entidad = key.replace('Service', '').toLowerCase();
+  crearEndpoint(servicio, entidad);
 });
 
-app.put('/clientes/:id', (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  const { nombre, telefono, direccion } = req.body; // Incluye direccion
-  clienteService.modificarCliente(id, nombre, telefono, direccion); // Llamamos al metodo del servicio
-  res.json({ message: `Cliente ${id} modificado` });
-});
-
-app.delete('/clientes/:id', (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  clienteService.eliminarCliente(id); // Llamamos al metodo del servicio
-  res.json({ message: `Cliente ${id} eliminado` });
-});
-
-app.put('/clientes/:id/visitas', (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  clienteService.incrementarVisitasCliente(id);
-  res.json({ message: `Visitas del cliente ${id} incrementadas` });
-});
-
-// Endpoints para mascotas
-app.post('/mascotas', (req: Request, res: Response) => {
-  const { nombre, tipo, idCliente } = req.body;
-  mascotaService.agregarMascota(nombre, tipo, idCliente);
-  res.json({ message: `Mascota ${nombre} agregada` });
-});
-
-app.get('/mascotas', (req: Request, res: Response) => {
-  res.json(mascotaService.obtenerMascotas());
-});
-
-app.put('/mascotas/:id', (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  const { nombre, tipo } = req.body; // Cambios necesarios
-  mascotaService.modificarMascota(id, nombre, tipo); // Llamamos al metodo del servicio
-  res.json({ message: `Mascota ${id} modificada` });
-});
-
-app.delete('/mascotas/:id', (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  mascotaService.eliminarMascota(id); // Llamamos al metodo del servicio
-  res.json({ message: `Mascota ${id} eliminada` });
-});
-
-
-
-// Endpoints para proveedores
-app.post('/proveedores', (req: Request, res: Response) => {
-  const { nombre, telefono, direccion } = req.body;  // Desestructuro 'direccion' también
-  proveedorService.agregarProveedor(nombre, telefono, direccion);  // Pasamos 'direccion' al servicio
-  res.json({ message: `Proveedor ${nombre} agregado` });
-});
-
-app.get('/proveedores', (req: Request, res: Response) => {
-  res.json(proveedorService.obtenerProveedores());
-});
-
-app.put('/proveedores/:id', (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  const { nombre, telefono, direccion } = req.body; // Incluye direccion
-  proveedorService.modificarProveedor(id, nombre, telefono, direccion); // Llamamos al metodo del servicio
-  res.json({ message: `Proveedor ${id} modificado` });
-});
-
-app.delete('/proveedores/:id', (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  proveedorService.eliminarProveedor(id); // Llamamos al metodo del servicio
-  res.json({ message: `Proveedor ${id} eliminado` });
-});
-
-// Endpoints para veterinarias
-app.post('/veterinarias', (req: Request, res: Response) => {
-  const { nombre, telefono, direccion } = req.body;
-  veterinariaService.agregarVeterinaria(nombre, telefono, direccion);
-  res.json({ message: `Veterinaria ${nombre} agregada` });
-});
-
-app.get('/veterinarias', (req: Request, res: Response) => {
-  res.json(veterinariaService.obtenerVeterinarias());
-});
-
-app.put('/veterinarias/:id', (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  const { nombre, direccion } = req.body; // Cambios necesarios
-  veterinariaService.modificarVeterinaria(id, nombre, direccion); // Llamamos al metodo del servicio
-  res.json({ message: `Veterinaria ${id} modificada` });
-});
-
-app.delete('/veterinarias/:id', (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  veterinariaService.eliminarVeterinaria(id); // Llamamos al metodo del servicio
-  res.json({ message: `Veterinaria ${id} eliminada` });
-});
-
-// Servidor
 const PORT = 3000;
-app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});
 

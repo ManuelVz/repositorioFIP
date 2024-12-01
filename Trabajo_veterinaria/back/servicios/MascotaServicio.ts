@@ -1,45 +1,25 @@
-  import { Mascota } from '../entidades/Mascota';
-  import { generarIDUnico } from '../generadorID/GeneradorID';
+import { Mascota } from '../entidades/Mascota'; // Importo la clase Mascota que es la entidad que voy a manejar
+import { BaseServicio } from './BaseServicio'; // Importo la clase base donde tengo los metodos comunes
 
-  // Clase para manejar las operaciones relacionadas con las mascotas
-  export class MascotaService {
-    private mascotas: Mascota[] = []; // Lista de mascotas
+export class MascotaService extends BaseServicio<Mascota> { // MascotaService hereda de BaseServicio para poder usar sus metodos comunes
 
-    // Metodo para agregar una mascota nueva
-    agregarMascota(nombre: string, especie: string, dueñoId: number): void {
-      const idExistentes = this.mascotas.map(m => m.id); // Obtengo todos los IDs actuales
-      const nuevoID = generarIDUnico(idExistentes); // Genero un ID unico
-      const mascota = new Mascota(nombre, especie, dueñoId); // Creo la mascota
-      mascota.id = nuevoID; // Le asigno el ID generado
-      this.mascotas.push(mascota); // La agrego a la lista
-      console.log(`Mascota ${nombre} agregada con exito.`); // Confirmo
-    }
+  // Metodo para agregar una nueva mascota
+  agregarElemento(nombre: string, especie: string, dueñoId: number): void {
+    const nuevoID = this.generarID(); // Genero el ID unico para esta mascota
+    const mascota = new Mascota(nuevoID, nombre, especie, dueñoId); // Creo la mascota con los datos proporcionados
+    (this as any).elementos.push(mascota); // Agrego la nueva mascota a la lista de elementos
+    console.log(`Mascota ${nombre} agregada con éxito.`); // Confirmo que la mascota se agregó correctamente
+  }
 
-    // Metodo para modificar una mascota existente
-    modificarMascota(id: number, nuevoNombre: string, nuevaEspecie: string): void {
-      const mascota = this.mascotas.find(m => m.id === id); // Busco la mascota
-      if (mascota) {
-        mascota.nombre = nuevoNombre; // Actualizo el nombre
-        mascota.especie = nuevaEspecie; // Actualizo la especie
-        console.log(`Mascota ${id} modificada con exito.`); // Confirmo
-      } else {
-        console.log(`Mascota con ID ${id} no encontrada.`); // Error si no la encuentro
-      }
-    }
-
-    // Metodo para eliminar una mascota por su ID
-    eliminarMascota(id: number): void {
-      const index = this.mascotas.findIndex(m => m.id === id); // Busco el indice
-      if (index !== -1) {
-        this.mascotas.splice(index, 1); // La saco de la lista
-        console.log(`Mascota ${id} eliminada con exito.`); // Confirmo
-      } else {
-        console.log(`Mascota con ID ${id} no encontrada.`); // Error si no la encuentro
-      }
-    }
-
-    // Metodo para obtener todas las mascotas
-    obtenerMascotas(): Mascota[] {
-      return this.mascotas; // Devuelvo la lista de mascotas
+  // Metodo para modificar los datos de una mascota
+  modificarElemento(id: number, nuevoNombre: string, nuevaEspecie: string): void {
+    const mascota = (this as any).elementos.find(m => m.id === id); // Busco la mascota por su ID
+    if (mascota) { // Si la encuentro
+      mascota.nombre = nuevoNombre; // Actualizo el nombre de la mascota
+      mascota.especie = nuevaEspecie; // Actualizo la especie de la mascota
+      console.log(`Mascota ${id} modificada con éxito.`); // Printeo que la mascota fue modificada
+    } else { // Si no la encuentro
+      console.log(`Mascota con ID ${id} no encontrada.`); // Printeo que no se encontro la mascota
     }
   }
+}
