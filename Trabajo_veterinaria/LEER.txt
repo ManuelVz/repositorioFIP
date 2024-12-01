@@ -1,0 +1,15 @@
+Buenas! 
+
+-En la carpeta back, estan todos los archivos ts que utilice para el desarrollo de las funciones.
+-En la carpeta front, estan todos los archivos que utilice para armar un front sencillo (Rocío me comento que no era necesario, pero me vino bien para probar algunas cosas)
+
+
+-Para correr server.ts, y ver desde el front:
+
+npx tsc
+node Compilados/server.js
+
+Y luego correr index.html
+
+
+
