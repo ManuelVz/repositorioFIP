@@ -28,7 +28,7 @@ const crearEndpoint = (servicio: any, entidad: string) => {
 
   // Endpoint para obtener todos
   app.get(`/${entidad}`, (req: Request, res: Response) => {
-    console.log(`GET /${entidad}`);  // Esto te ayudará a ver si la ruta es alcanzada
+    console.log(`GET /${entidad}`);  // Esto sirve para ver si la ruta es alcanzada
     res.json(servicio.obtenerElementos());
   });
 
